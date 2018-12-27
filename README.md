@@ -13,6 +13,8 @@ Make sure you have the following in place
 **Note:** We will be using "us-east-1" for this example. If you would like to use a different region, make sure 
     Fargate is available in the region and swap out references to `us-east-1` throughout the example.
 ## Deployment
+
+### Amazon Secrets Manager
 *   Create a `secrets.json` file for use with AWS Secrets Manager
 ```
 {
@@ -30,6 +32,9 @@ aws secretsmanager --region us-east-1 create-secret --name hubotSlackCreds \
 ```
 aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCreds
 ```
+
+### Amazon Elastic Container Registry
+
 *   Create an Amazon Elastic Container Registry (ECR)
 ```
 aws ecr create-repository --repository-name hubot
@@ -56,4 +61,7 @@ Type your password in when prompted
 ```
 docker push aws-hubot:1.0.0 aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot
 ```
+
+### Amazon Elastic Container Service
+
 *   Work In Progress

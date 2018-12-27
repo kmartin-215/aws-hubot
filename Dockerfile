@@ -16,23 +16,22 @@ RUN pip install awscli --upgrade --user
 
 
 # Create our Hubot directories
-RUN mkdir -p /opt/hubot
-RUN mkdir -p /opt/hubot/scripts
+RUN mkdir -p /opt/hubot \
+    mkdir -p /opt/hubot/scripts \
+    mkdir -p /opt/hubot/help
 
 
 # Copy files to the directories
 COPY *.* /opt/hubot/
-
-
-# Set the NPM Registry
-# In production we will use an AWS repository or Nexus
+COPY ./scripts/*.* /opt/hubot/scripts/
+COPY ./help/*.* /opt/hubot/help/
 
 
 # Install the dependancies
 RUN cd /opt/hubot && npm install
 
 
-# Set the working directory to /opt/bot
+# Set the working directory to /opt/hubot
 WORKDIR /opt/hubot
 
 

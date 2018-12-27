@@ -1,0 +1,17 @@
+{
+  "name": "aws-hubot",
+  "version": "1.0.0",
+  "description": "Hubot running on AWS ECS Fargate using AWS Secret Manager",
+  "main": "index.js",
+  "scripts": {
+    "start": "bash launch.sh",
+    "test": "mocha"
+  },
+  "author": "Kevin Martin <21.kmart@gmail.com> (https://github.com/kmart2234)",
+  "license": "MIT",
+  "dependencies": {
+    "hubot": "3.1.1",
+    "hubot-redis-brain": "1.0.0",
+    "hubot-slack": "4.6.0"
+  }
+}

@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 
 # Install the AWS CLI
-RUN pip install awscli --upgrade --user
+RUN pip3 install awscli --upgrade --user
 
 
 # Create our Hubot directories

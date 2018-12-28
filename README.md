@@ -37,11 +37,15 @@ aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCre
 
 *   Create an Amazon Elastic Container Registry (ECR)
 ```
-aws ecr create-repository --repository-name hubot
+aws ecr create-repository --repository-name aws-hubot
 ```
 *   Build your Docker Image
 ```
 docker build -t aws-hubot:1.0.0 .
+```
+*   Tag your image
+```
+docker tag aws-hubot:1.0.0 aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
 ```
 *   Log into Amazon ECR
 ```
@@ -59,7 +63,7 @@ Type your password in when prompted
 *   Now you can push your image to Amazon ECR
     (**Note:** You will need to replace `aws_account_id` below with your actual AWS Account ID)
 ```
-docker push aws-hubot:1.0.0 aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot
+docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
 ```
 
 ### Amazon Elastic Container Service

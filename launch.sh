@@ -5,7 +5,7 @@ export hubotSlack=$(/root/.local/bin/aws secretsmanager --region us-east-1 get-s
 export hubotToken=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackToken' | /bin/sed 's/\"//g')
 export hubotName=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackBotname' | /bin/sed 's/\"//g')
 
-# Set the HUBOT_SLACK_TOKEN environment variable
+# Set the HUBOT_SLACK_TOKEN env vars
 if [[ -z "${HUBOT_SLACK_TOKEN}" ]]; then
   # Not detected, so setting via AWS Secrets
   export HUBOT_SLACK_TOKEN=${hubotToken}

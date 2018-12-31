@@ -15,6 +15,11 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install awscli --upgrade --user
 
 
+# Add an export command at the end of your profile and reload
+RUN export PATH=~/.local/bin:$PATH \
+    source ~/.profile
+
+
 # Create our Hubot directories
 RUN mkdir -p /opt/hubot \
     mkdir -p /opt/hubot/scripts \

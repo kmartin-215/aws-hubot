@@ -44,6 +44,16 @@ aws ecr create-repository --repository-name aws-hubot
 *   Build your Docker Image
 ```
 docker build -t aws-hubot:1.0.0 .
+
+# OPTIONAL: Local DEV testing:
+docker run -it -e HUBOT_SLACK_TOKEN=yourTokenGoesHere -e HUBOT_SLACK_BOTNAME=yourBotNameGoesHere aws-hubot:1.0.0 bash
+echo $HUBOT_SLACK_TOKEN
+echo $HUBOT_SLACK_BOTNAME
+npm start
+
+# NOTES:
+#/root/.local/bin/aws --version
+#/root/.local/bin/aws configure
 ```
 *   Tag your image
 ```

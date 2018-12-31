@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 
-hubotSlack=$(~/.local/bin/aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCreds)
+export hubotSlack=$(/root/.local/bin/aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCreds)
 
-hubotToken=$(echo ${hubotSlack} | jq '.SecretString | fromjson | .hubotSlackToken')
-hubotName=$(echo ${hubotSlack} | jq '.SecretString | fromjson | .hubotSlackBotname')
+export hubotToken=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackToken' | /bin/sed 's/\"//g')
+export hubotName=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackBotname' | /bin/sed 's/\"//g')
 
-export HUBOT_SLACK_TOKEN=${hubotToken}
-export HUBOT_SLACK_BOTNAME=${hubotName}
+# Set the HUBOT_SLACK_TOKEN environment variable
+if [[ -z "${HUBOT_SLACK_TOKEN}" ]]; then
+  # Not detected, so setting via AWS Secrets
+  export HUBOT_SLACK_TOKEN=${hubotToken}
+else
+  # Detected existing, probably set by a developer via docker run
+  echo "HUBOT_SLACK_TOKEN environment variable already exists:"
+  echo $HUBOT_SLACK_TOKEN
+fi
 
+# Set the HUBOT_SLACK_TOKEN environment variable
+if [[ -z "${HUBOT_SLACK_BOTNAME}" ]]; then
+  # Not detected, so setting via AWS Secrets
+  export HUBOT_SLACK_BOTNAME=${hubotName}
+else
+  # Detected existing, probably set by a developer via docker run
+  echo "HUBOT_SLACK_TOKEN environment variable already exists:"
+  echo $HUBOT_SLACK_TOKEN
+fi
+
+# Start Hubot
 /opt/hubot/node_modules/hubot/bin/hubot --adapter slack
 

@@ -9,6 +9,7 @@ export hubotName=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | 
 if [[ -z "${HUBOT_SLACK_TOKEN}" ]]; then
   # Not detected, so setting via AWS Secrets
   export HUBOT_SLACK_TOKEN=${hubotToken}
+  echo $HUBOT_SLACK_TOKEN
 else
   # Detected existing, probably set by a developer via docker run
   echo "HUBOT_SLACK_TOKEN environment variable already exists:"
@@ -19,6 +20,7 @@ fi
 if [[ -z "${HUBOT_SLACK_BOTNAME}" ]]; then
   # Not detected, so setting via AWS Secrets
   export HUBOT_SLACK_BOTNAME=${hubotName}
+  echo $HUBOT_SLACK_TOKEN
 else
   # Detected existing, probably set by a developer via docker run
   echo "HUBOT_SLACK_TOKEN environment variable already exists:"

@@ -9,3 +9,4 @@ export HUBOT_SLACK_TOKEN=${hubotToken}
 export HUBOT_SLACK_BOTNAME=${hubotName}
 
 /opt/hubot/node_modules/hubot/bin/hubot --adapter slack
+

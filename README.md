@@ -75,9 +75,10 @@ docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
 ```
 aws iam --region us-east-1 create-role --role-name ecsTaskExecutionRole --assume-role-policy-document file://task-execution-assume-role.json
 ```
-*   Attach the task execution role policy
+*   Attach the Task Execution Role and SecretsManagerReadWrite policies
 ```
 aws iam --region us-east-1 attach-role-policy --role-name ecsTaskExecutionRole --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+aws iam --region us-east-1 attach-role-policy --role-name ecsTaskExecutionRole --policy-arn arn:aws:iam::aws:policy/SecretsManagerReadWrite
 ```
 *   Create a cluster configuration
 ```

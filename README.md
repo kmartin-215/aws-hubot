@@ -37,15 +37,15 @@ aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCre
 
 *   Create an Amazon Elastic Container Registry (ECR)
 ```
-aws ecr create-repository --repository-name aws-hubot
+aws ecr create-repository --repository-name hubot
 ```
 *   Build your Docker Image
 ```
-docker build -t aws-hubot:1.0.0 .
+docker build -t hubot:1.0.0 .
 ```
 *   Tag your image
 ```
-docker tag aws-hubot:1.0.0 aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
+docker tag hubot:1.0.0 aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 ```
 *   Log into Amazon ECR
 ```
@@ -64,7 +64,7 @@ Type your password in when prompted
 
     **Note:** You will need to replace `aws_account_id` below with your actual AWS Account ID
 ```
-docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
+docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 ```
 
 ### Amazon Elastic Container Service
@@ -75,12 +75,12 @@ aws cloudformation deploy --stack-name=chatops --template-file=aws/cluster.yml -
 ```
 *   Deploy our Hubot stack using a CloudFormation template
 ```
-aws cloudformation deploy --stack-name hubot --template-file=aws/hubot.yml --parameter-overrides ServiceName=hubot ImageUrl=aws_account_id.dkr.ecr.us-east-1.amazonaws.com/aws-hubot:1.0.0
+aws cloudformation deploy --stack-name hubot --template-file=aws/hubot.yml --parameter-overrides ServiceName=hubot ImageUrl=aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 ```
 
 ## Testing Locally
 ```
-docker run -it -e HUBOT_SLACK_TOKEN=yourTokenGoesHere -e HUBOT_SLACK_BOTNAME=yourBotNameGoesHere aws-hubot:1.0.0 bash
+docker run -it -e HUBOT_SLACK_TOKEN=yourTokenGoesHere -e HUBOT_SLACK_BOTNAME=yourBotNameGoesHere hubot:1.0.0 bash
 echo $HUBOT_SLACK_TOKEN
 echo $HUBOT_SLACK_BOTNAME
 npm start

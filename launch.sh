@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export hubotSlack=$(/root/.local/bin/aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCreds)
+export hubotSlack=$(/root/.local/bin/aws secretsmanager --region us-east-1 get-secret-value --secret-id hubot)
 
 export hubotToken=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackToken' | /bin/sed 's/\"//g')
 export hubotName=$(echo ${hubotSlack} | /usr/bin/jq '.SecretString | fromjson | .hubotSlackBotname' | /bin/sed 's/\"//g')

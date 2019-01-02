@@ -24,13 +24,13 @@ Make sure you have the following in place
 ```
 *   Create a new secret in the AWS Secret Manager
 ```
-aws secretsmanager --region us-east-1 create-secret --name hubotSlackCreds \
-    --description "Hubot Slack Credentials" \
+aws secretsmanager --region us-east-1 create-secret --name hubot \
+    --description "Hubot Credentials" \
     --secret-string file://secrets.json
 ```
 *   Verify that the secret was created successfully
 ```
-aws secretsmanager --region us-east-1 get-secret-value --secret-id hubotSlackCreds
+aws secretsmanager --region us-east-1 get-secret-value --secret-id hubot
 ```
 
 ### Amazon Elastic Container Registry
@@ -74,6 +74,8 @@ docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 aws cloudformation deploy --stack-name=chatops --template-file=aws/cluster.yml --capabilities=CAPABILITY_IAM
 ```
 *   Deploy our Hubot stack using a CloudFormation template
+
+    **Note:** You will need to replace `aws_account_id` below with your actual AWS Account ID
 ```
 aws cloudformation deploy --stack-name hubot --template-file=aws/hubot.yml --parameter-overrides ServiceName=hubot ImageUrl=aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 ```

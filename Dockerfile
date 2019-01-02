@@ -21,14 +21,12 @@ RUN export PATH=~/.local/bin:$PATH
 
 # Create our Hubot directories
 RUN mkdir -p /opt/hubot \
-    mkdir -p /opt/hubot/scripts \
-    mkdir -p /opt/hubot/help
+    mkdir -p /opt/hubot/scripts
 
 
 # Copy files to the directories
 COPY *.* /opt/hubot/
 COPY ./scripts/*.* /opt/hubot/scripts/
-COPY ./help/*.* /opt/hubot/help/
 
 
 # Install the dependancies

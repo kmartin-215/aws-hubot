@@ -64,3 +64,6 @@ typings/
 
 # Webstorm
 .idea
+
+# Secret File
+secrets.json

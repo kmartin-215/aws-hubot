@@ -1,3 +1,7 @@
+// Description:
+//   This script returns help for hubot
+//
+
 module.exports = function (robot) {
 
     robot.respond(/help/i, async function (msg) {

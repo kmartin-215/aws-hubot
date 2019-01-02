@@ -76,3 +76,6 @@ typings/
 
 # CloudFormation
 aws/
+
+# Secret file
+secrets.json

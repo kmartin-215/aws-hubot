@@ -74,6 +74,9 @@ typings/
 # Serverless directories
 .serverless
 
+# Webstorm
+/.idea
+
 # CloudFormation
 aws/
 

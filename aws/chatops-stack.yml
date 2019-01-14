@@ -1,10 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description:  Chatops on AWS
+
+# Parameters allow us to pass values into the template at runtime
 Parameters:
   EnvironmentName:
     Type: String
     Default: chatops
     Description: A name for the environment that this cloudformation will be part of.
+
+# Set of keys/values that operate as a lookup table
 Mappings:
   # Hard values for the subnet mask. These masks define
   # the range of internal IP addresses that can be assigned.

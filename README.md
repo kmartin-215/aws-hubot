@@ -71,7 +71,7 @@ docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/hubot:1.0.0
 
 *   Deploy our basic stack using a CloudFormation template
 ```
-aws cloudformation deploy --stack-name=chatops --template-file=aws/cluster.yml --capabilities=CAPABILITY_IAM
+aws cloudformation deploy --stack-name=chatops --template-file=aws/chatops-stack.yml --capabilities=CAPABILITY_IAM
 ```
 *   Deploy our Hubot stack using a CloudFormation template
 

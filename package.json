@@ -10,8 +10,13 @@
   "author": "Kevin Martin <21.kmart@gmail.com> (https://github.com/kmart2234)",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "2.384.0",
     "hubot": "3.1.1",
     "hubot-redis-brain": "1.0.0",
     "hubot-slack": "4.6.0"
+  },
+  "devDependencies": {
+    "babel-polyfill": "6.26.0",
+    "jest": "23.6.0"
   }
 }

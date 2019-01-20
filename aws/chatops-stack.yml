@@ -5,8 +5,29 @@ Description:  Chatops on AWS
 Parameters:
   EnvironmentName:
     Type: String
-    Default: chatops
+    Default: chatopsHubot
     Description: A name for the environment that this cloudformation will be part of.
+  ServiceName:
+    Type: String
+    Default: hubot
+    Description: A name for the service
+  ImageTag:
+    Type: String
+    Default: latest
+    Description: The url of a docker image that contains the application process that
+      will handle the traffic for this service
+  ContainerCpu:
+    Type: Number
+    Default: 256
+    Description: How much CPU to give the container. 1024 is 1 CPU
+  ContainerMemory:
+    Type: Number
+    Default: 512
+    Description: How much memory in megabytes to give the container
+  DesiredCount:
+    Type: Number
+    Default: 1
+    Description: How many copies of the service task to run
 
 # Set of keys/values that operate as a lookup table
 Mappings:
@@ -40,8 +61,8 @@ Resources:
     Properties:
       AvailabilityZone:
         Fn::Select:
-        - 0
-        - Fn::GetAZs: {Ref: 'AWS::Region'}
+          - 0
+          - Fn::GetAZs: {Ref: 'AWS::Region'}
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PublicOne', 'CIDR']
       MapPublicIpOnLaunch: true
@@ -91,12 +112,12 @@ Resources:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: ['ecs.amazonaws.com', 'ecs-tasks.amazonaws.com']
-          Action: ['sts:AssumeRole']
+          - Effect: Allow
+            Principal:
+              Service: ['ecs.amazonaws.com', 'ecs-tasks.amazonaws.com']
+            Action: ['sts:AssumeRole']
       ManagedPolicyArns:
-      - 'arn:aws:iam::aws:policy/SecretsManagerReadWrite'
+        - 'arn:aws:iam::aws:policy/SecretsManagerReadWrite'
 
   # This is a role which is used by the ECS tasks themselves.
   ECSTaskExecutionRole:
@@ -104,28 +125,78 @@ Resources:
     Properties:
       AssumeRolePolicyDocument:
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [ecs-tasks.amazonaws.com]
-          Action: ['sts:AssumeRole']
+          - Effect: Allow
+            Principal:
+              Service: [ecs-tasks.amazonaws.com]
+            Action: ['sts:AssumeRole']
       Path: /
       Policies:
-      - PolicyName: AmazonECSTaskExecutionRolePolicy
-        PolicyDocument:
-          Statement:
-          - Effect: Allow
-            Action:
-            # Allow the ECS Tasks to download images from ECR
-            - 'ecr:GetAuthorizationToken'
-            - 'ecr:BatchCheckLayerAvailability'
-            - 'ecr:GetDownloadUrlForLayer'
-            - 'ecr:BatchGetImage'
+        - PolicyName: AmazonECSTaskExecutionRolePolicy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  # Allow the ECS Tasks to download images from ECR
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
 
-            # Allow the ECS tasks to upload logs to CloudWatch
-            - 'logs:CreateLogStream'
-            - 'logs:PutLogEvents'
-            Resource: '*'
+                  # Allow the ECS tasks to upload logs to CloudWatch
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['-', [!Ref 'EnvironmentName', 'service', !Ref 'ServiceName']]
 
+  # The task definition. This is a simple metadata description of what
+  # container to run, and what resource requirements it has.
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn: [ECSTaskExecutionRole, ECSRole]
+    Properties:
+      Family: !Ref 'ServiceName'
+      Cpu: !Ref 'ContainerCpu'
+      Memory: !Ref 'ContainerMemory'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !Ref 'ECSTaskExecutionRole'
+      TaskRoleArn: !Ref 'ECSRole'
+      ContainerDefinitions:
+        - Name: !Ref 'ServiceName'
+          Cpu: !Ref 'ContainerCpu'
+          Memory: !Ref 'ContainerMemory'
+          Image: !Join [ '', [ !Ref 'AWS::AccountId', '.dkr.ecr.', !Ref 'AWS::Region', '.amazonaws.com/', !Ref 'ServiceName', ':', !Ref 'ImageTag' ] ]
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group: !Join ['-', [!Ref 'EnvironmentName', 'service', !Ref 'ServiceName']]
+              awslogs-region: !Ref 'AWS::Region'
+              awslogs-stream-prefix: !Ref 'ServiceName'
+
+  # The service. The service is a resource which allows you to run multiple
+  # copies of a type of task, and gather up their logs and metrics, as well
+  # as monitor the number of running tasks and replace any that have crashed
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn: FargateContainerSecurityGroup
+    Properties:
+      ServiceName: !Ref 'ServiceName'
+      Cluster: !Ref 'ECSCluster'
+      LaunchType: FARGATE
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 75
+      DesiredCount: !Ref 'DesiredCount'
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups: [!Ref 'FargateContainerSecurityGroup']
+          Subnets: [!Ref 'PublicSubnetOne']
+      TaskDefinition: !Ref 'TaskDefinition'
 
 # These are the values output by the CloudFormation template. Be careful
 # about changing any of them, because of them are exported with specific
